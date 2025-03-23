@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Iceping - Looking For Match</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Find your Iceping match" />
+  <link rel="icon" href="favicon.png">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: auto;
+      font-family: "Inter", sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      position: relative;
+      background: linear-gradient(
+        315deg, 
+        #65005E 3%,    /* deep purple/magenta */
+        #3C84CE 38%,   /* medium blue */
+        #500000 68%,   /* maroon */
+        #7B0015 98%    /* darker maroon */
+      );
+      background-size: 400% 400%;
+      background-attachment: fixed;
+      animation: gradient 15s ease infinite;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Dark opacity overlay */
+    body:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+
+    /* Container */
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    /* Main Card */
+    .match-card {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+
+    /* Instruction Card */
+    .instruction-card {
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .instruction-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .instruction-text {
+      font-size: 1.4rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .instruction-emoji {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    /* Timer Area */
+    .timer-area {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .timer-text {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
+
+    .timer {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    /* Action Buttons */
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .button-primary {
+      background-color: #fff;
+      color: #3c4043;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    .button-primary:hover {
+      background-color: #f6f9fe;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .button-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .button-secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 15px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      display: none; /* Initially hidden */
+    }
+
+    .button-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .button-secondary:active {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background-color: rgba(40, 40, 40, 0.95);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 90%;
+      width: 400px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-title {
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .modal-text {
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .modal-button {
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex: 1;
+      text-align: center;
+    }
+
+    .modal-button-primary {
+      background-color: #fff;
+      color: #3c4043;
+      border: none;
+    }
+
+    .modal-button-secondary {
+      background-color: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .modal-button:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Animations */
+    @keyframes gradient {
+      0% { background-position: 0 0; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0 0; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .pulse-animation {
+      animation: pulse 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Looking For Your Match</h1>
+    </div>
+    
+    <div class="match-card">
+      <div class="instruction-card pulse-animation">
+        <span class="instruction-emoji">🔍</span>
+        <h2 class="instruction-title">How to find your match:</h2>
+        <p class="instruction-text" id="instruction-text">
+          Sing "meow meow" while looking for them in a green shirt
+        </p>
+      </div>
+      
+      <div class="timer-area">
+        <p class="timer-text">Time elapsed:</p>
+        <div class="timer" id="timer">00:00</div>
+      </div>
+      
+      <div class="button-container">
+        <button class="button-primary" id="cannot-find-button" style="background-color: #ffc0c0;">Cannot Find Match</button>
+        <br>
+        <button class="button-primary" id="found-button" style="background-color: #c7ffc0;">Found Match</button>
+        <button class="button-secondary" id="report-lost-button">Report Lost Connection</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Warning Modal -->
+  <div class="modal" id="warning-modal">
+    <div class="modal-content">
+      <h2 class="modal-title">Still Looking?</h2>
+      <p class="modal-text">
+        Please wait 5 more minutes before reporting a lost connection. 
+        Your match might still be looking for you!
+      </p>
+      <div class="modal-buttons">
+        <button class="modal-button modal-button-secondary" id="keep-looking-button">Keep Looking</button>
+        <button class="modal-button modal-button-primary" id="confirm-lost-button">Report Lost</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elements
+      const cannotFindButton = document.getElementById('cannot-find-button');
+      const reportLostButton = document.getElementById('report-lost-button');
+      const warningModal = document.getElementById('warning-modal');
+      const keepLookingButton = document.getElementById('keep-looking-button');
+      const confirmLostButton = document.getElementById('confirm-lost-button');
+      const timerElement = document.getElementById('timer');
+      const instructionText = document.getElementById('instruction-text');
+      
+      // Timer variables
+      let seconds = 0;
+      let timerInterval;
+      
+      // Start timer
+      function startTimer() {
+        timerInterval = setInterval(function() {
+          seconds++;
+          const minutes = Math.floor(seconds / 60);
+          const remainingSeconds = seconds % 60;
+          
+          timerElement.textContent = 
+            (minutes < 10 ? '0' : '') + minutes + ':' + 
+            (remainingSeconds < 10 ? '0' : '') + remainingSeconds;
+          
+          // After 5 minutes (300 seconds), enable the report lost button
+          if (seconds >= 300) {
+            reportLostButton.style.display = 'block';
+          }
+        }, 1000);
+      }
+      
+      // Load instructions from backend (simulated)
+      function loadInstructions() {
+        // In a real application, you would fetch this from your backend
+        // For example:
+        /*
+        fetch('/api/match-instructions')
+          .then(response => response.json())
+          .then(data => {
+            instructionText.textContent = data.instruction;
+          })
+          .catch(error => {
+            console.error('Error loading instructions:', error);
+          });
+        */
+        
+        // For demonstration, we'll use the placeholder
+        const instruction = "Sing 'meow meow' while looking for them in a green shirt";
+        instructionText.textContent = instruction;
+      }
+      
+      // Initialize
+      loadInstructions();
+      startTimer();
+      
+      // Event Listeners
+      cannotFindButton.addEventListener('click', function() {
+        // Show the warning modal
+        warningModal.classList.add('active');
+      });
+      
+      keepLookingButton.addEventListener('click', function() {
+        // Hide the modal and continue looking
+        warningModal.classList.remove('active');
+      });
+      
+      confirmLostButton.addEventListener('click', function() {
+        // Report lost connection
+        console.log('Reporting lost connection');
+        
+        // Here you would send a request to your backend
+        // For example:
+        /*
+        fetch('/api/report-lost', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ elapsed: seconds }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          window.location.href = '/match-failed.html';
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+        */
+        
+        // For demonstration, we'll just show an alert
+        alert('Lost connection reported. Redirecting...');
+         window.location.href = '/Users/arhamkhaishagi/downloads/iceping/buzzer.html';
+      });
+      
+      reportLostButton.addEventListener('click', function() {
+        // Show the warning modal
+        warningModal.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

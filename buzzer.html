@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Iceping</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: auto;
+  overflow: auto;
+  font-family: "Inter";
+  color: #fff;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(
+    315deg, 
+    #65005E 3%,    /* Existing deep purple/magenta */
+    #3C84CE 38%,   /* Original medium blue (kept) */
+    #500000 68%,   /* Aggie maroon (official-like) */
+    #7B0015 98%    /* A second maroon tone for variety */
+  );
+  background-size: 400% 400%;
+  background-attachment: fixed;
+  animation: gradient 15s ease infinite;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Dark opacity overlay */
+body:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* Adjust opacity as needed (0.3 = 30% opacity) */
+  z-index: 1;
+}
+
+#fadein {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  opacity: 1;
+  z-index: 999;
+  transform: translateY(0);
+  animation: fadeinall 1s normal both;
+  animation-fill-mode: forwards;
+  animation-delay: .3s
+}
+
+/* Hero Container Styles */
+.hero-container {
+  text-align: center;
+  padding: 20px;
+  max-width: 800px;
+  position: relative;
+  z-index: 2; /* Place content above the dark overlay */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  order: -1; /* Move content above button */
+}
+
+.image-container {
+  flex: 0 0 auto;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.text-container {
+  text-align: center;
+  position: relative;
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  max-width: 300px;
+}
+
+.text-container:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  bottom: -15px;
+  left: 50%;
+  margin-left: -15px;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 15px solid rgba(255, 255, 255, 0.1);
+  border-bottom: none;
+}
+
+.text-container p {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.hero-title {
+  font-size: 6rem;
+  color: #fff;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 40px;
+}
+
+/* Power Button Styles */
+.wrapper {
+  width: 150px;
+  height: 150px;
+  margin: 30px auto 0;
+  position: relative;
+}
+
+label {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #b25244;
+  background: linear-gradient(#f7f2f6, #b2ac9e);
+  position: relative;
+  color: #a5a39d;
+  font-size: 70px;
+  text-align: center;
+  line-height: 150px;
+  transition: all 0.3s ease-out;
+  text-shadow: 0 2px 1px rgba(0, 0, 0, 0.25);
+  z-index: 1;
+  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.13), 0 5px 8px rgba(0, 0, 0, 0.3), 0 10px 10px 4px rgba(0, 0, 0, 0.3);
+}
+
+label:after {
+  content: "";
+  position: absolute;
+  left: -20px;
+  right: -20px;
+  top: -20px;
+  bottom: -20px;
+  z-index: -2;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+label:before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  right: -10px;
+  top: -10px;
+  bottom: -10px;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: inset 0 10px 10px rgba(0, 0, 0, 0.13);
+  -webkit-filter: blur(1px);
+  filter: blur(1px);
+}
+
+/* Enhanced visual feedback for the button */
+input:checked ~ label {
+  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.13), 0 5px 8px rgba(0, 0, 0, 0.35), 0 3px 10px 4px rgba(0, 0, 0, 0.2);
+  color: #d44c4c;
+  transform: scale(0.95);
+  background: linear-gradient(#f7c3c3, #d44c4c);
+}
+
+input:active ~ label {
+  transform: scale(0.9);
+  box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.pulse-animation {
+  animation: pulse 0.5s;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.13), 0 5px 8px rgba(0, 0, 0, 0.3), 0 10px 10px 4px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    transform: scale(0.9);
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.4), 0 3px 6px rgba(0, 0, 0, 0.2), 0 7px 8px 3px rgba(0, 0, 0, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.13), 0 5px 8px rgba(0, 0, 0, 0.3), 0 10px 10px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.icon-off:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  margin: -35% 0 0 -35%;
+  border-radius: 50%;
+  background: linear-gradient(#cbc7bc, #d2cbc3);
+  box-shadow: 0 -2px 5px rgba(255, 255, 255, 0.05), 0 2px 5px rgba(255, 255, 255, 0.1);
+  -webkit-filter: blur(1px);
+  filter: blur(1px);
+}
+
+input {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 100;
+  position: absolute;
+  cursor: pointer;
+}
+
+/* Media Queries */
+@media(min-width:769px) {
+  /* On wider screens, position dialog box and image side by side */
+  .content-wrapper {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .text-container {
+    margin-right: 20px;
+    margin-bottom: 0;
+    text-align: right;
+  }
+  .text-container:before {
+    top: 50%;
+    bottom: auto;
+    left: auto;
+    right: -15px;
+    margin-left: 0;
+    margin-top: -15px;
+    border-left: 15px solid rgba(255, 255, 255, 0.1);
+    border-right: none;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+  }
+}
+
+@media(max-width:768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  .wrapper {
+    width: 120px;
+    height: 120px;
+  }
+  label {
+    line-height: 120px;
+    font-size: 55px;
+  }
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Animations */
+@keyframes fadeinall {
+  0% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0;
+  }
+  98% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100%);
+    z-index: -1;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/* Fullscreen Navigation Styles */
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0, 0.9);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: relative;
+  top: 25%;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.overlay a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 36px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus {
+  color: #f1f1f1;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 60px;
+}
+
+@media screen and (max-height: 450px) {
+  .overlay a {font-size: 20px}
+  .overlay .closebtn {
+    font-size: 40px;
+    top: 15px;
+    right: 35px;
+  }
+}
+  </style>
+</head>
+<body>
+  <div id="fadein"></div>
+  <div class="hero-container">
+    <div class="content-wrapper">
+      <div class="text-container">
+        <p>Press to Buzz!</p>
+      </div>
+      <div class="image-container">
+        <img src="excitedice.png" alt="Excited Ice">
+      </div>
+    </div>
+    
+    <div class="wrapper">
+      <input type="checkbox" id="power-button" class="startlistening">
+      <label for="power-button" id="button-label"><i class='icon-off'></i></label>
+    </div>
+    
+    <div class="message-display" id="message-display">
+        <br><br>
+      <p class="message-text"><span class="message-icon"></span><span id="status-message">ZZZZzzzzz.....</span></p>
+    </div>
+  </div>
+  
+<!-- Overlay Navigation -->
+<div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+      <a href="landing.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="buzzer.html">Buzzer</a>
+    </div>
+  </div>
+  
+  <!-- Hamburger Menu Button -->
+  <span style="position: fixed; top: 20px; right: 20px; font-size: 30px; cursor: pointer; color: white; z-index: 100; background-color: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 5px;" onclick="openNav()">&#9776;</span>
+  
+  <!-- Navigation JavaScript -->
+  <script>
+  function openNav() {
+    document.getElementById("myNav").style.width = "100%";
+  }
+  
+  function closeNav() {
+    document.getElementById("myNav").style.width = "0%";
+  }
+  </script>
+  
+
+  <script>
+    // Select the button
+    const startButton = document.getElementById('power-button');
+    
+    // Attach click event to the button
+    startButton.addEventListener('click', function() {
+      // Once button is clicked, add a keydown listener
+      window.addEventListener('keydown', handleKeyPress);
+      //alert('Now listening for the "O" key...');
+    });
+  
+    // Function to handle the key press
+    function handleKeyPress(event) {
+      // Check if the pressed key is "o" or "O"
+      if (event.key === 'o' || event.key === 'O') {
+        // Redirect to the desired page
+        window.location.href = 'matched.html';
+      }
+    }
+  </script>
+  <script type="text/javascript">
+    window.onload = function() {
+      setTimeout(function() {
+        document.getElementById("fadein").remove();
+      }, 1000);
+      
+      // Power button functionality with enhanced visual feedback
+      const powerButton = document.getElementById('power-button');
+      const buttonLabel = document.getElementById('button-label');
+      const messageDisplay = document.getElementById('message-display');
+      const statusMessage = document.getElementById('status-message');
+      
+      // Sample messages for demo purposes - in production these would come from backend
+      const messages = [
+        "Buzz successful! Waiting for response...",
+        "We'll buzz you when we find someone!",
+      ];
+      
+      // Show the message display with initial text
+      setTimeout(function() {
+        messageDisplay.classList.add('visible');
+      }, 500);
+      
+      powerButton.addEventListener('change', function() {
+        if(this.checked) {
+          console.log('Power button activated!');
+          
+          // Update status message with a random message from the array
+          const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+          statusMessage.textContent = randomMessage;
+          
+          // Ensure message display is visible
+          messageDisplay.classList.add('visible');
+          
+          // Here you would typically make an API call to your backend
+          // For example:
+          // fetch('/api/send-buzz', { method: 'POST' })
+          //   .then(response => response.json())
+          //   .then(data => {
+          //     statusMessage.textContent = data.message;
+          //   })
+          //   .catch(error => {
+          //     statusMessage.textContent = "Error: Couldn't connect to server";
+          //   });
+        } else {
+          console.log('Power button deactivated!');
+          statusMessage.textContent = "Ready for updates...";
+        }
+      });
+      
+      // Add pulse animation when clicked (regardless of checkbox state)
+      powerButton.addEventListener('mousedown', function() {
+        buttonLabel.classList.add('pulse-animation');
+        
+        // Remove the animation class after animation completes
+        setTimeout(function() {
+          buttonLabel.classList.remove('pulse-animation');
+        }, 500);
+      });
+    };
+  </script>
+</body>
+</html>

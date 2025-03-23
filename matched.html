@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Iceping - Match Card</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Iceping match profile card" />
+  <link rel="icon" href="favicon.png">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: auto;
+      font-family: "Inter", sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      position: relative;
+      background: linear-gradient(
+        315deg, 
+        #65005E 3%,    /* deep purple/magenta */
+        #3C84CE 38%,   /* medium blue */
+        #500000 68%,   /* maroon */
+        #7B0015 98%    /* darker maroon */
+      );
+      background-size: 400% 400%;
+      background-attachment: fixed;
+      animation: gradient 15s ease infinite;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Dark opacity overlay */
+    body:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+
+    /* Container */
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+
+    /* Match Card */
+    .match-card {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .match-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Card Header */
+    .card-header {
+      padding: 30px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Profile Image */
+    .profile-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      font-size: 60px;
+      overflow: hidden;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .profile-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Nickname */
+    .nickname {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    /* Card Body */
+    .card-body {
+      padding: 20px;
+    }
+
+    /* Trivia Section */
+    .trivia {
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .trivia-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      opacity: 0.7;
+    }
+
+    .trivia-text {
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+
+    /* Preference Section */
+    .preference {
+      margin-bottom: 30px;
+    }
+
+    .preference-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+      opacity: 0.7;
+    }
+
+    .preference-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preference-option {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      background-color: rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .preference-option:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .preference-option.selected {
+      background-color: rgba(60, 132, 206, 0.3);
+      border: 1px solid rgba(60, 132, 206, 0.6);
+    }
+
+    .preference-radio {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      margin-right: 10px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .preference-radio:checked {
+      border-color: #3C84CE;
+    }
+
+    .preference-radio:checked::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #3C84CE;
+    }
+
+    .preference-text {
+      font-size: 1rem;
+    }
+
+    /* Action Button */
+    .card-footer {
+      padding: 15px 20px 25px;
+      text-align: center;
+    }
+
+    .action-button {
+      background-color: #fff;
+      color: #3c4043;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 100%;
+    }
+
+    .action-button:hover {
+      background-color: #f6f9fe;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .action-button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Animations */
+    @keyframes gradient {
+      0% { background-position: 0 0; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0 0; }
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      font-size: 1rem;
+      z-index: 1000;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+        /* Fullscreen Navigation Styles */
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0, 0.9);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: relative;
+  top: 25%;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.overlay a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 36px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus {
+  color: #f1f1f1;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 60px;
+}
+
+@media screen and (max-height: 450px) {
+  .overlay a {font-size: 20px}
+  .overlay .closebtn {
+    font-size: 40px;
+    top: 15px;
+    right: 35px;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="match-card">
+      <div class="card-header">
+        <div class="profile-image">
+          <span>🐱</span>
+          <!-- For real image: <img src="profile-image.jpg" alt="Profile Image"> -->
+        </div>
+        <h2 class="nickname">Whiskers McLatte</h2>
+      </div>
+      
+      <div class="card-body">
+        <div class="trivia">
+          <p class="trivia-label">Fun Fact</p>
+          <p class="trivia-text">Knows all the lyrics to every song from the 90s but can never remember where they put their keys.</p>
+        </div>
+        
+        <div class="preference">
+          <p class="preference-label">Preference</p>
+          <div class="preference-options">
+            <label class="preference-option">
+              <input type="radio" name="preference" class="preference-radio" value="them_find_you" checked>
+              <span class="preference-text">You would like for them to look for you</span>
+            </label>
+            <label class="preference-option">
+              <input type="radio" name="preference" class="preference-radio" value="you_find_them">
+              <span class="preference-text">You would prefer to look for them</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-footer">
+        <button class="action-button" id="accept-button">Connect</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="toast" id="toast">Connection request sent!</div>
+  <!-- Overlay Navigation -->
+<div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+      <a href="landing.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="buzzer.html">Buzzer</a>
+    </div>
+  </div>
+  
+  <!-- Hamburger Menu Button -->
+  <span style="position: fixed; top: 20px; right: 20px; font-size: 30px; cursor: pointer; color: white; z-index: 100; background-color: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 5px;" onclick="openNav()">&#9776;</span>
+  
+  <!-- Navigation JavaScript -->
+  <script>
+  function openNav() {
+    document.getElementById("myNav").style.width = "100%";
+  }
+  
+  function closeNav() {
+    document.getElementById("myNav").style.width = "0%";
+  }
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Handle preference selection
+      const preferenceOptions = document.querySelectorAll('.preference-option');
+      
+      preferenceOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          // Visual selection update
+          preferenceOptions.forEach(opt => opt.classList.remove('selected'));
+          this.classList.add('selected');
+          
+          // Make sure the radio button is checked
+          const radio = this.querySelector('.preference-radio');
+          radio.checked = true;
+        });
+      });
+      
+      // Initial selection
+      document.querySelector('.preference-option input:checked')
+        .closest('.preference-option').classList.add('selected');
+      
+      // Handle connect button click
+      const acceptButton = document.getElementById('accept-button');
+      const toast = document.getElementById('toast');
+      
+      acceptButton.addEventListener('click', function() {
+        // Get the selected preference
+        const selectedPreference = document.querySelector('input[name="preference"]:checked').value;
+        console.log('Selected preference:', selectedPreference);
+        
+        // Get the profile data to send
+        const profileData = {
+          nickname: document.querySelector('.nickname').textContent,
+          preference: selectedPreference
+        };
+        
+        // Show toast notification
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+        
+        // In a real app, you would send this data to your backend
+        /*
+        fetch('/api/connect', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(profileData),
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          // Show success message
+          toast.textContent = "Connection request sent!";
+          toast.classList.add('show');
+          setTimeout(() => {
+            toast.classList.remove('show');
+          }, 3000);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          // Show error message
+          toast.textContent = "Error sending request. Please try again.";
+          toast.classList.add('show');
+          setTimeout(() => {
+            toast.classList.remove('show');
+          }, 3000);
+        });
+        */
+      });
+      
+      // Sample data loader function - in production, you would fetch this from your backend
+      function loadProfileData(profileData) {
+        // Update profile image
+        const profileImage = document.querySelector('.profile-image');
+        if (profileData.image) {
+          profileImage.innerHTML = `<img src="${profileData.image}" alt="${profileData.nickname}">`;
+        } else {
+          profileImage.innerHTML = `<span>${profileData.emoji || '🐱'}</span>`;
+        }
+        
+        // Update nickname
+        document.querySelector('.nickname').textContent = profileData.nickname;
+        
+        // Update trivia
+        document.querySelector('.trivia-text').textContent = profileData.trivia;
+        
+        // Update preference default
+        if (profileData.preferredOption) {
+          const radio = document.querySelector(`input[value="${profileData.preferredOption}"]`);
+          if (radio) {
+            radio.checked = true;
+            document.querySelectorAll('.preference-option').forEach(opt => opt.classList.remove('selected'));
+            radio.closest('.preference-option').classList.add('selected');
+          }
+        }
+        
+        // Update button text
+        if (profileData.buttonText) {
+          document.querySelector('.action-button').textContent = profileData.buttonText;
+        }
+      }
+      
+      // Example of how you would load data from backend
+      /*
+      fetch('/api/match-profile/123')
+        .then(response => response.json())
+        .then(data => {
+          loadProfileData(data);
+        })
+        .catch(error => {
+          console.error('Error loading profile data:', error);
+        });
+      */
+      
+      // For demonstration, we can simulate loading different profile data
+      const sampleProfiles = [
+        {
+          nickname: "Whiskers McLatte",
+          emoji: "🐱",
+          trivia: "Knows all the lyrics to every song from the 90s but can never remember where they put their keys.",
+          preferredOption: "them_find_you",
+          buttonText: "Connect"
+        },
+        {
+          nickname: "Professor Barkington",
+          emoji: "🐶",
+          trivia: "Can solve a Rubik's cube in under a minute while also making the perfect cup of coffee.",
+          preferredOption: "you_find_them",
+          buttonText: "Accept"
+        },
+        {
+          nickname: "Hops McGee",
+          emoji: "🐰",
+          trivia: "Once accidentally ordered 50 pizzas instead of 5, and turned it into a neighborhood block party.",
+          preferredOption: "them_find_you",
+          buttonText: "Say Hello"
+        }
+      ];
+      
+      // Load a random profile
+      // loadProfileData(sampleProfiles[Math.floor(Math.random() * sampleProfiles.length)]);
+    });
+  </script>
+    <script>
+        // Select the button
+        const startButton = document.getElementById('accept-button');
+        
+        // Attach click event to the button
+        startButton.addEventListener('click', function() {
+          // Once button is clicked, add a keydown listener
+          window.addEventListener('keydown', handleKeyPress);
+          //alert('Now listening for the "O" key...');
+        });
+      
+        // Function to handle the key press
+        function handleKeyPress(event) {
+          // Check if the pressed key is "o" or "O"
+          if (event.key === 'o' || event.key === 'O') {
+            // Redirect to the desired page
+            window.location.href = 'task.html';
+          }
+        }
+      </script>
+</body>
+</html>
